@@ -46,5 +46,5 @@ def from_json(json_obj: str) -> Packet:
         print(f"{class_name} can't handle arguments {tuple(payloads)}.")
 
 
-p = Packet(None, 12, 13)
-from_json(str(p))
+# p = Packet(None, 12, 13)
+# from_json(str(p))
