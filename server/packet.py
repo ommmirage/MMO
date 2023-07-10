@@ -30,11 +30,21 @@ def from_json(json_obj: str) -> Packet:
 
     try:
         action = obj_dict.pop('a')
-    except:
-        pass
+    except KeyError as e:
+        print(f"Tried to create packet from dictionary, but there is no action. Stacktrace: {e}")
 
-    payloads = obj_dict.values()
+    payloads = list(obj_dict.values())
+    print(payloads)
+
+    class_name = action + "Packet"
+    try:
+        constructor: type = globals()[class_name]
+        return constructor(*payloads)
+    except KeyError as e:
+        print(f"{class_name} is not a validpacket name. Stacktrace: {e}")
+    except TypeError:
+        print(f"{class_name} can't handle arguments {tuple(payloads)}.")
 
 
 p = Packet(None, 12, 13)
-print(bytes(p))
+from_json(str(p))
