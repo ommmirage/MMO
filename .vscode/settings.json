@@ -1,0 +1,8 @@
+{
+    "python.autoComplete.extraPaths": [
+        "/Users/sergey/python/MMO/server/venv/lib/autobahn"
+    ],
+    "python.analysis.extraPaths": [
+        "/Users/sergey/python/MMO/server/venv/lib/autobahn"
+    ]
+}
