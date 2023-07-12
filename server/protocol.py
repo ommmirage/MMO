@@ -2,6 +2,7 @@ import queue
 import packet
 from autobahn.twisted.websocket import WebSocketServerProtocol
 
+# We need protocol class to specify the behaviour of the server
 class GameServerProtocol(WebSocketServerProtocol):
     def __init__(self):
         super().__init__()
@@ -44,8 +45,10 @@ class GameServerProtocol(WebSocketServerProtocol):
         print(f"Websocket connection closed {'cleanly' if wasClean else 'unexpectedly'} with code {code}: {reason}")
 
     # Override
+    # Called when a new WebSocket message was received
     def onMessage(self, payload, isBinary):
-        # Что будет если не кодировать в utf-8?
+        # payload is a Python byte string. We docode it into a Python string.
+        # Autobahn validates bytes for being valid UTF8
         decoded_payload = payload.decode('utf-8')
 
         try:
