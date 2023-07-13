@@ -19,7 +19,7 @@ func _ready():
 	
 	# Add _network_client to a Scene tree
 	add_child(_network_client)
-	_network_client.connect_to_server("127.0.0.1", 8082)
+	_network_client.connect_to_server("127.0.0.1", 8081)
 	
 	# Connect "message_sent" signal from Chatbox with send_chat func
 	_chatbox.connect("message_sent", self, "send_chat")
@@ -27,8 +27,11 @@ func _ready():
 	# Returns a reference to the function PLAY()
 	state = funcref(self, "PLAY")
 	
-func PLAY(packet):
-	pass
+func PLAY(p):
+	match p.action:
+		"Chat":
+			var message: String = p.payloads[0]
+			_chatbox.add_message(message)
 	
 func send_chat(text: String):
 	var p: Packet = Packet.new("Chat", [text])
@@ -44,7 +47,8 @@ func _handle_client_disconnected(was_clean: bool):
 	
 func _handle_network_data(data: String):
 	print("Received server data: ", data)
-	var action_payloads: Array = Packet.json_toaction_payloads(data)
+	var action_payloads: Array = Packet.json_to_action_payloads(data)
+	print (action_payloads)
 	var packet: Packet = Packet.new(action_payloads[0], action_payloads[1])
 	# Pass the packet to our current state. If it is PLAY, it will process
 	# it one way, if it is LOGIN state, it will process the packet another way

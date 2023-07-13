@@ -15,7 +15,7 @@ func toString() -> String:
 	var data: String = JSON.print(serialize_dict)
 	return data
 	
-func json_to_action_payloads(json_str: String) -> Array:
+static func json_to_action_payloads(json_str: String) -> Array:
 	var action: String
 	var payloads: Array = []
 	# Че за result?

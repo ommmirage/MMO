@@ -7,18 +7,18 @@ class GameServerProtocol(WebSocketServerProtocol):
     def __init__(self):
         super().__init__()
         self._packet_queue: queue.Queue[tuple['GameServerProtocol', packet.Packet]] = queue.Queue()
-        self._state: callable = None
+        self._state: callable = self.PLAY
 
     # States
     def PLAY(self, sender: 'GameServerProtocol', p: packet.Packet):
         if p.action == packet.Action.Chat:
             if sender == self:
                 self.broadcast(p, exclude_self=True)
-            # else:
-            #     self.send_client(p)
+            else:
+                self.send_client(p)
 
     def tick(self):
-        #Process the next packet in the queue
+        # Process the next packet in the queue
         if not self._packet_queue.empty():
             s, p = self._packet_queue.get()
             self._state(s, p)
@@ -30,9 +30,10 @@ class GameServerProtocol(WebSocketServerProtocol):
                 continue
             other.onPacket(self, p)
 
+    # Override
     def onPacket(self, sender: 'GameServerProtocol', p: packet.Packet):
         self._packet_queue.put((sender, p))
-        print(f"Queued packet: {p}")
+        print(f"Queued packet: {p}. Action = {p.action}")
 
     # Override
     def onConnect(self, request):
@@ -41,7 +42,6 @@ class GameServerProtocol(WebSocketServerProtocol):
     # Override
     def onOpen(self):
         print(f"Websocket connection open.")
-        self._state = self.PLAY
 
     # Override
     def onClose(self, wasClean, code, reason):
@@ -63,6 +63,6 @@ class GameServerProtocol(WebSocketServerProtocol):
         self.onPacket(self, p)
 
     # Send message directly to a client without broadcasting to other protocols
-    # def send_client(self, p: packet.Packet):
-    #     b = bytes(p)
-    #     self.sendMessage(b)
+    def send_client(self, p: packet.Packet):
+        b = bytes(p)
+        self.sendMessage(b)

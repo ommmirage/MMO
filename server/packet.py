@@ -1,6 +1,3 @@
-# Provide a way to construct and deconstruct packets
-# that will be sent and received
-
 import json
 import enum
 
@@ -9,13 +6,12 @@ class Action(enum.Enum):
     Chat = enum.auto()
 
 class Packet:
-    def __init__(self, action, *payloads):
+    def __init__(self, action: Action, *payloads):
         self.action: Action = action
         self.payloads: tuple = payloads
 
     def __str__(self) -> str:
-        # serialize_dict = {'a': self.action.name}
-        serialize_dict = {}
+        serialize_dict = {'a': self.action.name}
         for i in range(len(self.payloads)):
             serialize_dict[f'p{i}'] = self.payloads[i]
         json_obj = json.dumps(serialize_dict, separators=(',', ':'))
@@ -39,7 +35,6 @@ def from_json(json_obj: str) -> Packet:
         print(f"Tried to create packet from dictionary, but there is no action. Stacktrace: {e}")
 
     payloads = list(obj_dict.values())
-    print(payloads)
 
     class_name = action + "Packet"
     try:
@@ -51,5 +46,5 @@ def from_json(json_obj: str) -> Packet:
         print(f"{class_name} can't handle arguments {tuple(payloads)}.")
 
 
-# p = Packet(None, 12, 13)
-# from_json(str(p))
+# p = ChatPacket("12")
+# print(str(p))

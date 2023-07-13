@@ -21,17 +21,19 @@ class GameFactory(WebSocketServerFactory):
             player.tick()
 
     # Override
-    # def buildProtocol(self, addr):
-    #     print("Build protocol")
-    #     protocol = super().buildProtocol(addr)
-    #     self.players.add(protocol)
-    #     return protocol
+    # Что это?
+    def buildProtocol(self, addr):
+        protocol = super().buildProtocol(addr)
+        self.players.add(protocol)
+        return protocol
+
 
 if __name__ == "__main__":
     log.startLogging(sys.stdout)
 
-    PORT: int = 8082
-    factory = GameFactory("127.0.0.1", PORT)
+    PORT: int = 8081
+    # Попробовать с другим IP
+    factory = GameFactory("0.0.0.0", PORT)
 
     # Start a server using the factory, listening on TCP
     reactor.listenTCP(PORT, factory)
