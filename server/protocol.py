@@ -11,7 +11,11 @@ class GameServerProtocol(WebSocketServerProtocol):
 
     # States
     def PLAY(self, sender: 'GameServerProtocol', p: packet.Packet):
-        pass
+        if p.action == packet.Action.Chat:
+            if sender == self:
+                self.broadcast(p, exclude_self=True)
+            # else:
+            #     self.send_client(p)
 
     def tick(self):
         #Process the next packet in the queue
@@ -59,6 +63,6 @@ class GameServerProtocol(WebSocketServerProtocol):
         self.onPacket(self, p)
 
     # Send message directly to a client without broadcasting to other protocols
-    def send_client(self, p: packet.Packet):
-        b = bytes(p)
-        self.sendMessage(b)
+    # def send_client(self, p: packet.Packet):
+    #     b = bytes(p)
+    #     self.sendMessage(b)

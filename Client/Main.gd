@@ -6,6 +6,7 @@ const Packet = preload("res://packet.gd")
 # The onready keyword is a special keyword in Godot that ensures 
 # the variable is assigned and ready to use when the script is 
 # instantiated or the scene is loaded.
+onready var _chatbox = get_node("Chatbox")
 onready var _network_client = NetworkClient.new()
 var state: FuncRef
 
@@ -18,14 +19,22 @@ func _ready():
 	
 	# Add _network_client to a Scene tree
 	add_child(_network_client)
-	
 	_network_client.connect_to_server("127.0.0.1", 8082)
 	
+	# Connect "message_sent" signal from Chatbox with send_chat func
+	_chatbox.connect("message_sent", self, "send_chat")
+	
+	# Returns a reference to the function PLAY()
 	state = funcref(self, "PLAY")
 	
 func PLAY(packet):
 	pass
 	
+func send_chat(text: String):
+	var p: Packet = Packet.new("Chat", [text])
+	_network_client.send_packet(p)
+	_chatbox.add_message(text)
+
 func _handle_client_connected():
 	print("Client connected to server!")
 	

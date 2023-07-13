@@ -3,6 +3,9 @@
         "/Users/sergey/python/MMO/server/venv/lib/autobahn"
     ],
     "python.analysis.extraPaths": [
-        "/Users/sergey/python/MMO/server/venv/lib/autobahn"
-    ]
+        "/Users/sergey/python/MMO/server/venv/lib/autobahn",
+        "/Users/sergey/python/MMO/server"
+    ],
+    "python.defaultInterpreterPath":
+        "/Users/sergey/python/MMO/server/venv/bin/python3"
 }

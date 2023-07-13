@@ -48,6 +48,7 @@ func _on_data():
 	emit_signal("data", data)
 	
 func _process(delta):
+	# poll() Waits up to 1 second to receive a new network event.
 	_client.poll()
 	
 func _send_string(string: String) -> void:

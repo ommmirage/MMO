@@ -5,7 +5,8 @@ import json
 import enum
 
 class Action(enum.Enum):
-    pass
+    # enum.auto() allows to automatically assign unique values to each member
+    Chat = enum.auto()
 
 class Packet:
     def __init__(self, action, *payloads):
@@ -22,6 +23,10 @@ class Packet:
 
     def __bytes__(self) -> bytes:
         return str(self).encode('utf-8')
+
+class ChatPacket(Packet):
+    def __init__(self, message: str):
+        super().__init__(Action.Chat, message)
 
 def from_json(json_obj: str) -> Packet:
     obj_dict = json.loads(json_obj)
