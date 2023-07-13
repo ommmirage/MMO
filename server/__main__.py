@@ -21,8 +21,10 @@ class GameFactory(WebSocketServerFactory):
             player.tick()
 
     # Override
-    # Что это?
+    # When a new connection is made to the server, the Twisted networking framework
+    # automatically calls this method passing the connection's address.
     def buildProtocol(self, addr):
+        print(addr)
         protocol = super().buildProtocol(addr)
         self.players.add(protocol)
         return protocol
@@ -32,7 +34,7 @@ if __name__ == "__main__":
     log.startLogging(sys.stdout)
 
     PORT: int = 8081
-    # Попробовать с другим IP
+    # If you want your WebSocket server to be accessible from any IP address associated with your machine
     factory = GameFactory("0.0.0.0", PORT)
 
     # Start a server using the factory, listening on TCP
