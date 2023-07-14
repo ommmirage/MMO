@@ -4,6 +4,11 @@ import enum
 class Action(enum.Enum):
     # enum.auto() allows to automatically assign unique values to each member
     Chat = enum.auto()
+    Ok = enum.auto()
+    Deny = enum.auto()
+    Register = enum.auto()
+    Login = enum.auto()
+
 
 class Packet:
     def __init__(self, action: Action, *payloads):
@@ -23,6 +28,24 @@ class Packet:
 class ChatPacket(Packet):
     def __init__(self, message: str):
         super().__init__(Action.Chat, message)
+
+class OkPacket(Packet):
+    def __init__(self):
+        super().__init__(Action.Ok)
+
+class DenyPacket(Packet):
+    def __init__(self, reason: str):
+        super().__init__(Action.Deny, reason)
+
+class LoginPacket(Packet):
+    def __init__(self, username: str, password: str):
+        super().__init__(Action.Login, username, password)
+
+class RegisterPacket(Packet):
+    def __init__(self, username: str, password: str):
+        super().__init__(Action.Login, username, password)
+
+
 
 def from_json(json_obj: str) -> Packet:
     obj_dict = json.loads(json_obj)

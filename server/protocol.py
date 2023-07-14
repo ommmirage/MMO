@@ -1,5 +1,6 @@
 import queue
 import packet
+import models
 from autobahn.twisted.websocket import WebSocketServerProtocol
 
 # We need protocol class to specify the behaviour of the server
@@ -8,6 +9,7 @@ class GameServerProtocol(WebSocketServerProtocol):
         super().__init__()
         self._packet_queue: queue.Queue[tuple['GameServerProtocol', packet.Packet]] = queue.Queue()
         self._state: callable = self.PLAY
+        self._user: models.User = None
 
     # States
     def PLAY(self, sender: 'GameServerProtocol', p: packet.Packet):
@@ -16,6 +18,26 @@ class GameServerProtocol(WebSocketServerProtocol):
                 self.broadcast(p, exclude_self=True)
             else:
                 self.send_client(p)
+
+    def LOGIN(self, sender: 'GameServerProtocol', p: packet.Packet):
+        if p.action == packet.Action.Login:
+            username, password = p.payloads
+            if models.User.objects.filter(username=username, password=password).exists():
+                self._user = model.User.objects.get(username=username)
+                self.send_client(packet.OkPacket())
+                self._state = self.PLAY
+            else:
+                self.send_client(packet.DenyPacket("Username or password incorrect"))
+
+        elif p.action == packet.Action.Register:
+            username, password = p.payloads
+            if models.User.objects.filter(username=username).exists():
+                self.send_client(packet.DenyPacket("This username already exists"))
+            else:
+                user = models.User(username=username, password=password)
+                user.save()
+                self.send_client(packet.OkPacket())
+
 
     def tick(self):
         # Process the next packet in the queue
@@ -42,6 +64,7 @@ class GameServerProtocol(WebSocketServerProtocol):
     # Override
     def onOpen(self):
         print(f"Websocket connection open.")
+        self._state = self.LOGIN
 
     # Override
     def onClose(self, wasClean, code, reason):

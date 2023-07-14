@@ -1,6 +1,6 @@
 extends Node
 
-const Packet = preload("res://packet.gd")
+const Packet = preload("res://Scripts/packet.gd")
 
 signal connected
 signal data
